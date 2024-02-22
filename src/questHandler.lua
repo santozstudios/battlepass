@@ -56,28 +56,31 @@ function quests.GetWeeks()
 	return weeks
 end
 
-function quests.Get_WeeklyQuests(name)
+function quests.Get_WeeklyQuests(name,weekName)
 
 
    local is_unlocked = {}
    local data = PlayerStore.getPlayerData(name)
    local Data = {}
    
-
-
-     for _,def in pairs(quests.register_quests) do
-         if not is_unlocked[name] and def:can_unlock(data) then
-             local progress = def.get_progress and def:get_progress(data)
-
-             Data[#Data + 1] = {
-				name     = def.title,
-				des      = def.description,
-                points = def.Points,
-				unlocked = false,
-				progress = progress,
-				week = def.week
-			}
-         end
+     for week,data in pairs(quests.register_quests) do
+		if(week == weekName) then
+			for questName,def in pairs(data) do
+				if not is_unlocked[name] and def:can_unlock(data) then
+					local progress = def.get_progress and def:get_progress(data)
+	   
+					Data[#Data + 1] = {
+					   name     = def.title,
+					   des      = def.description,
+					   points = def.Points,
+					   unlocked = false,
+					   progress = progress,
+					   week = def.week,
+					   premiumPoints = def.premium.points
+				   }
+				end
+			end
+		end
      end
      
      return Data

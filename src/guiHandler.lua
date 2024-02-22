@@ -39,55 +39,94 @@ minetest.colorize("#EE0", "Rewards")..
 "list[current_player;main;0,4.2;5,4;]"..
 ""
 
-function guiHandler.get_formspec(guiName,week)
+local currentIdx
+
+function guiHandler.get_formspec(guiName,plrName,formspecData)
+
+    if not formspecData then return end
 
     if(guiName == "Quest") then
         local formspec = "size[6,7]"..
         "list[current_player;main;0,3;6,4;]"..
-        "image[1.5,-0.8;3,1;battlePass.png]"
+        "image[1.5,-0.8;3,1;battlePass.png]"..
+        "style[Back_Btn;fgcolor=red;textcolor=black]"..
+        "image_button[0,1.8;2.2,1;Button.png;Back_Btn;Back;true;false;]"..""
 
-        local quest_weeks = quests.GetWeeks()
-
-        if #quest_weeks == 0 then
-            return
+        if(currentIdx == #formspecData) then 
+           currentIdx = 1
         end
 
-        for i,week in ipairs(quest_weeks) do
-
-            -- local questTitle = data.name
-            -- local questDes = data.des
-            -- local questPoints = data.points
-            -- local currprogress = data.progress.current
-            -- local Questtarget = data.progress.target
-           
+        if(currentIdx + 3 < #formspecData) then
             formspec = formspec..
-            -- "image[-0.1,0.4;7.4,1.6;default_wood.png]"..
+            "style[Forward_Btn;fgcolor=red;textcolor=black]"..
+            "image_button[3,1.8;2.2,1;Button.png;Forward_Btn;Forward;true;false;]"..""
+        end
+
+        if(currentIdx == 4) then 
+            currentIdx = currentIdx + 1
+        end
+
+        local j=1
+        for i = currentIdx,math.min(currentIdx + 3,#formspecData) do
+            local week = formspecData[i]
+            formspec = formspec..
             "tooltip["..week..";"..
-            minetest.colorize("#EE0", week..": Click to check out quests.")..
+            minetest.colorize("#EE0",tostring(week)..": Click to check out quests.")..
             "]"..
-            "style[Back_Btn;fgcolor=red;textcolor=black]"..
             "style["..week..";fgcolor=red;textcolor=black]"..
-            "image_button[" .. tostring((i-1) * 1.5) ..",0.4;1.5,1;tile.png;"..week..";"..week..";true;false;]"..
-            "image_button[0,1.8;2.2,1;Button.png;Back_Btn;Back;true;false;]"..
-            -- "image_button[2.7,0.2;2.2,1.8;pass.png;Quest_Button;]"..
-            -- "tooltip[Quest_Button;"..
-            -- minetest.colorize("#EE0", "QUEST:")..
-            -- minetest.colorize("#FFFFFF",questTitle.."\n")..
-            -- questDes.."\n\n"..
-            -- minetest.colorize("#A020F0", "INFORMATION")..
-            -- "\n"..
-            -- minetest.colorize("#5A5A5A","Points:")..
-            -- questPoints.."\n"..
-            -- minetest.colorize("#5A5A5A","Progress:")..
-            -- currprogress.."/"..Questtarget..
-            ""
+            "image_button[" .. tostring((j-1) * 1.5) ..",0.4;1.5,1;tile.png;"..week..";"..week..";true;false;]"..
+            "" 
+            j = j + 1
+            currentIdx = i
         end
 
         return formspec
 
     elseif(guiName == "WeekQuest") then
+        local formspec = "size[6,8]"..
+        "list[current_player;main;0,4;6,4;]"..
+        "image[1.7,-0.8;3,1;battlePass.png]"..
+        "label[2,0.2;FREE QUESTS]"..
+        "label[1.8,1.6;PREMIUM QUESTS]"..
+        "image_button[0,3;2.2,1;Button.png;Back_Btn;Back;true;false;]"..
+        ""
+        for i,data in ipairs(formspecData) do
 
+            local questTitle = data.name
+            local questDes = data.des
+            local questPoints = data.points
+            local currprogress = data.progress.current
+            local Questtarget = data.progress.target
+            local premiumPts = data.premiumPoints
 
+            formspec = formspec..
+            "image_button[" .. tostring((i-1) * 1.6) ..",0.6;1.5,1;tile.png;"..questTitle..";;true;false;]"..
+            "image_button[" .. tostring((i-1) * 1.6) ..",2;1.5,1;tile.png;Premium"..questTitle..";;true;false;]"..
+            "tooltip["..questTitle..";"..
+            minetest.colorize("#EE0", "QUEST:")..
+            minetest.colorize("#FFFFFF",questTitle.."\n")..
+            questDes.."\n\n"..
+            minetest.colorize("#A020F0", "INFORMATION")..
+            "\n"..
+            minetest.colorize("#5A5A5A","Points:")..
+            questPoints.."\n"..
+            minetest.colorize("#5A5A5A","Progress:")..
+            currprogress.."/"..Questtarget..']'..
+            "tooltip[Premium"..questTitle..";"..
+            minetest.colorize("#EE0", "QUEST:")..
+            minetest.colorize("#FFFFFF",questTitle.."\n")..
+            questDes.."\n\n"..
+            minetest.colorize("#A020F0", "INFORMATION")..
+            "\n"..
+            minetest.colorize("#5A5A5A","Points:")..
+            premiumPts.."\n"..
+            minetest.colorize("#5A5A5A","Progress:")..
+            currprogress.."/"..Questtarget.."]"..
+            ""
+        end
+
+        return formspec
+         
     end
 end
 
@@ -109,25 +148,59 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
         elseif fields.Reward_Button then
 
         elseif fields.Quest_Button then
-            minetest.show_formspec(name, "battlepass:Quests",guiHandler.get_formspec("Quest",name))
+            local quest_weeks = quests.GetWeeks()
+
+            if #quest_weeks == 0 then
+                return
+            end
+            currentIdx = 1
+            minetest.show_formspec(name, "battlepass:Quests",guiHandler.get_formspec("Quest",name,quest_weeks))
         elseif fields.btn_close then
             return true
         end
     elseif formname == "battlepass:Quests" then
 
         -- Check for week buttons --
-        local weeksData = {}--quests.getWeeks()
+        local quest_weeks = quests.GetWeeks()
 
-        if #weeksData > 0 then
-            for i = 1, #weeksData do
-                if fields["Week"..i] then
-                    minetest.show_formspec(name, "battlepass:mainGui",iguiHandler.get_formspec("WeekQuest",name))
+        if fields.Back_Btn then
+            if currentIdx > 4 then
+                if #quest_weeks == 0 then
+                   return
                 end
+                minetest.show_formspec(name, "battlepass:Quests",guiHandler.get_formspec("Quest",name,quest_weeks))
+            else
+                minetest.show_formspec(name, "battlepass:mainGui",inventory_formspec)
             end
         end
 
+        if fields.Forward_Btn then
+            minetest.show_formspec(name, "battlepass:Quests",guiHandler.get_formspec("Quest",name,quest_weeks))
+        end
+
+        if #quest_weeks > 0 then
+            for i = 1, #quest_weeks do
+                if fields["Week"..i] then
+                    local questWeek = "Week"..i
+                    local weekQuests = quests.Get_WeeklyQuests(name,questWeek)
+
+                    if #weekQuests == 0 then
+                        return
+                    end
+                    
+                    minetest.show_formspec(name, "battlepass:weekGui",guiHandler.get_formspec("WeekQuest",name,weekQuests))
+                end
+            end
+        end
+    elseif formname == "battlepass:weekGui" then
         if fields.Back_Btn then
-            minetest.show_formspec(name, "battlepass:mainGui", inventory_formspec)
+            local quest_weeks = quests.GetWeeks()
+
+            if #quest_weeks == 0 then
+                return
+            end
+            currentIdx = 1
+            minetest.show_formspec(name, "battlepass:Quests",guiHandler.get_formspec("Quest",name,quest_weeks))
         end
     end
 end)
