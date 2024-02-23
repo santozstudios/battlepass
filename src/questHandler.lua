@@ -36,10 +36,6 @@ function quests.register_quest(name, def)
 
 	quests.register_quests[def.week][name] = def
 
-	-- local tdef = awards.registered_awards[name]
-	-- if def.description == nil and tdef.getDefaultDescription then
-	-- 	def.description = tdef:getDefaultDescription()
-	-- end
 end
 
 function quests.GetWeeks()
@@ -63,9 +59,9 @@ function quests.Get_WeeklyQuests(name,weekName)
    local data = PlayerStore.getPlayerData(name)
    local Data = {}
    
-     for week,data in pairs(quests.register_quests) do
+     for week,weekData in pairs(quests.register_quests) do
 		if(week == weekName) then
-			for questName,def in pairs(data) do
+			for questName,def in pairs(weekData) do
 				if not is_unlocked[name] and def:can_unlock(data) then
 					local progress = def.get_progress and def:get_progress(data)
 	   

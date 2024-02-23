@@ -7,6 +7,10 @@ PlayerStore = {
 
 }
 
+rewards = {
+    register_rewards = {}
+}
+
 
 
 
@@ -16,6 +20,9 @@ local GuiHandler = dofile(minetest.get_modpath("battlepass") .. "\\src\\guiHandl
 dofile(minetest.get_modpath("battlepass") .. "\\src\\questHandler.lua")
 dofile(minetest.get_modpath("battlepass") .. "\\src\\DataStore.lua")
 dofile(minetest.get_modpath("battlepass") .. "\\src\\Data.lua")
+dofile(minetest.get_modpath("battlepass") .. "\\src\\awardsHandler.lua")
+dofile(minetest.get_modpath("battlepass") .. "\\src\\RewardsData.lua")
+
 
 PlayerStore.load()
 

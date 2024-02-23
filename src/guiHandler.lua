@@ -40,6 +40,7 @@ minetest.colorize("#EE0", "Rewards")..
 ""
 
 local currentIdx
+local currentAwardIdx
 
 function guiHandler.get_formspec(guiName,plrName,formspecData)
 
@@ -126,7 +127,67 @@ function guiHandler.get_formspec(guiName,plrName,formspecData)
         end
 
         return formspec
-         
+
+    elseif(guiName == "Award") then
+        local formspec = "size[6,9]"..
+        "image[1.5,-0.8;3,1;battlePass.png]"..
+        "list[current_player;main;0,5;6,4;]"..
+        "label[2.3,1.3;FREE]"..
+        "label[2.1,2.7;PREMIUM]"..
+        "style[Back_Btn;fgcolor=red;textcolor=black]"..
+        "image_button[0,4.2;2,0.8;Button.png;Back_Btn;Back;true;false;]"..""
+
+        if(currentAwardIdx == #formspecData) then 
+            currentAwardIdx = 1
+         end
+ 
+         if(currentAwardIdx + 3 < #formspecData) then
+             formspec = formspec..
+             "style[Forward_Btn;fgcolor=red;textcolor=black]"..
+             "image_button[4,4.2;2,0.8;Button.png;Forward_Btn;Forward;true;false;]"..""
+         end
+ 
+         if(currentAwardIdx == 4) then 
+            currentAwardIdx = currentAwardIdx + 1
+         end
+ 
+         local j=1
+
+         for i = currentAwardIdx,math.min(currentAwardIdx + 3,#formspecData) do
+            local data = formspecData[i]
+            local rewardName = data.name
+           local rewardTitle = data.title
+           local rewardStatus = data.status
+
+           formspec = formspec..
+           "image_button[" .. tostring((j-1) * 1.5) ..",0.3;1.5,1;tile.png;"..rewardName..";;true;false;]"..
+           "image_button[" .. tostring((j-1) * 1.5) ..",3.2;1.5,1;tile.png;Premium"..rewardName..";;true;false;]"..
+            "tooltip["..rewardName..";"..
+            minetest.colorize("#90EE90", rewardName.."\n".."\n")..
+            minetest.colorize("#D3D3D3","Rewards".."\n")..
+            minetest.colorize("#ADD8E6", rewardTitle.."\n".."\n")..
+            minetest.colorize("#D3D3D3","Status:")..
+            minetest.colorize("#90EE90"," "..rewardStatus).."]"..
+            "tooltip[Premium"..rewardName..";"..
+            minetest.colorize("#90EE90", rewardName.."\n".."\n")..
+            minetest.colorize("#D3D3D3","Rewards".."\n")..
+            minetest.colorize("#ADD8E6", rewardTitle.."\n".."\n")..
+            minetest.colorize("#D3D3D3","Status:")..
+            minetest.colorize("#90EE90"," "..rewardStatus).."]"..
+            ""
+
+            if rewardStatus == "Locked" then
+                formspec = formspec..
+                "image_button[" .. tostring(0.3 + ((j-1) * 1.5)) ..",1.7;1,1;Locked.png;"..rewardStatus..";;true;false;]"
+            else
+                formspec = formspec..
+                "image_button[" .. tostring(0.3 + ((j-1) * 1.5)) ..",1.7;1,1;Unlocked.png;"..rewardStatus..";;true;false;]"
+            end
+            j= j+1
+            currentAwardIdx = i
+        end
+
+        return formspec
     end
 end
 
@@ -146,7 +207,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
             print(fields.Info_Button.State);
             -- minetest.show_formspec(player:get_player_name(), "battlepass:Quests", quest_formSpec)
         elseif fields.Reward_Button then
-
+             local rewardsData = rewards.Get_Rewards(name)
+             if #rewardsData == 0 then 
+                return
+             end
+             currentAwardIdx = 1
+             minetest.show_formspec(name, "battlepass:Awards",guiHandler.get_formspec("Award",name,rewardsData))
         elseif fields.Quest_Button then
             local quest_weeks = quests.GetWeeks()
 
@@ -201,6 +267,25 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
             end
             currentIdx = 1
             minetest.show_formspec(name, "battlepass:Quests",guiHandler.get_formspec("Quest",name,quest_weeks))
+        end
+
+    elseif formname == "battlepass:Awards" then
+        local rewardsData = rewards.Get_Rewards(name)
+        
+        if #rewardsData == 0 then 
+            return
+        end
+
+        if fields.Back_Btn then
+            if currentAwardIdx > 4 then
+                minetest.show_formspec(name, "battlepass:Awards",guiHandler.get_formspec("Award",name,rewardsData))
+            else
+                minetest.show_formspec(name, "battlepass:mainGui",inventory_formspec)
+            end
+        end
+
+        if fields.Forward_Btn then
+            minetest.show_formspec(name, "battlepass:Awards",guiHandler.get_formspec("Award",name,rewardsData))
         end
     end
 end)
