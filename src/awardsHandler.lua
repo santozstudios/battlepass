@@ -31,11 +31,27 @@ function rewards.Get_Rewards(name)
       if not hash_is_unlocked[name] then
           Data[idx] = {
             name = awardData.name,
-            status = "Locked",
-            title = awardData.title
+            title = awardData.title,
+			OnRewardCollected = awardData.OnRewardCollected
           }
       end
     end
 
     return Data
+end
+
+function rewards.Unlock(playerName,tier)
+    
+	if not minetest.get_player_by_name(name) then
+		return
+	end
+
+	local data  = PlayerStore.getPlayerData(playerName)
+	local rwdef = 	rewards.register_rewards["Tier"..tostring(tier)]
+	assert(rwdef, "Unable to unlock an award which doesn't exist!")
+
+
+
+
+
 end

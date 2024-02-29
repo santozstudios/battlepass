@@ -1,6 +1,7 @@
 
 quests = {
-    register_quests = {}
+    register_quests = {},
+    registered_triggers = {}
 }
 
 PlayerStore = {
@@ -16,7 +17,8 @@ rewards = {
 
 local GuiHandler = dofile(minetest.get_modpath("battlepass") .. "\\src\\guiHandler.lua")
 
-
+dofile(minetest.get_modpath("battlepass") .. "\\src\\trigger.lua")
+dofile(minetest.get_modpath("battlepass") .. "\\src\\triggersData.lua")
 dofile(minetest.get_modpath("battlepass") .. "\\src\\questHandler.lua")
 dofile(minetest.get_modpath("battlepass") .. "\\src\\DataStore.lua")
 dofile(minetest.get_modpath("battlepass") .. "\\src\\Data.lua")
@@ -24,7 +26,10 @@ dofile(minetest.get_modpath("battlepass") .. "\\src\\awardsHandler.lua")
 dofile(minetest.get_modpath("battlepass") .. "\\src\\RewardsData.lua")
 
 
+
 PlayerStore.load()
+minetest.register_on_shutdown(PlayerStore.save)
+
 
 local main_formSpec = "size[8,4]" ..
 "button[2,0;4,1;btn_quest;Quests]" ..

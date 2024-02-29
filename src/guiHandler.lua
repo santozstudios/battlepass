@@ -46,6 +46,8 @@ function guiHandler.get_formspec(guiName,plrName,formspecData)
 
     if not formspecData then return end
 
+    local plrData = PlayerStore.getPlayerData(plrName)
+
     if(guiName == "Quest") then
         local formspec = "size[6,7]"..
         "list[current_player;main;0,3;6,4;]"..
@@ -95,10 +97,10 @@ function guiHandler.get_formspec(guiName,plrName,formspecData)
 
             local questTitle = data.name
             local questDes = data.des
-            local questPoints = data.points
+            local questPoints = tostring(data.points.."x")
             local currprogress = data.progress.current
             local Questtarget = data.progress.target
-            local premiumPts = data.premiumPoints
+            local premiumPts = tostring(data.premiumPoints.."x")
 
             formspec = formspec..
             "image_button[" .. tostring((i-1) * 1.6) ..",0.6;1.5,1;tile.png;"..questTitle..";;true;false;]"..
@@ -156,8 +158,18 @@ function guiHandler.get_formspec(guiName,plrName,formspecData)
          for i = currentAwardIdx,math.min(currentAwardIdx + 3,#formspecData) do
             local data = formspecData[i]
             local rewardName = data.name
-           local rewardTitle = data.title
-           local rewardStatus = data.status
+            local rewardTitle = data.title
+            local rewardStatus = nil
+            local plrTier = plrData.tierData["currentTier"]
+
+            -- minetest.chat_send_player(name, name..data.tierData["progress"])
+
+
+            if(i >= plrTier) then
+                rewardStatus = "Locked"
+            else
+                rewardStatus = "Unlocked"
+            end
 
            formspec = formspec..
            "image_button[" .. tostring((j-1) * 1.5) ..",0.3;1.5,1;tile.png;"..rewardName..";;true;false;]"..
@@ -287,7 +299,52 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
         if fields.Forward_Btn then
             minetest.show_formspec(name, "battlepass:Awards",guiHandler.get_formspec("Award",name,rewardsData))
         end
+
+        local rewardsData = rewards.Get_Rewards(name)
+        for i,rewardData in ipairs(rewardsData) do
+            if fields[rewardData.name] then
+
+                local plrData = PlayerStore.getPlayerData(name)
+                local plrTier = plrData.tierData["currentTier"]
+                local collectedData = plrData.collected
+                if not collectedData then return end
+                if i >= plrTier then
+                    minetest.chat_send_player(name, "Award Locked")
+                     return
+                 end 
+
+                 for i,collAwd in ipairs(collectedData.Basic) do
+                     if rewardData.name == collAwd then
+                        minetest.chat_send_player(name, "Award Collected Previously")
+                        return
+                     end
+                 end
+
+                for key,value in pairs(rewardData) do
+                    minetest.chat_send_player(name, "Keys "..key)
+                end
+
+
+                if not rewardData.OnRewardCollected then
+                     return
+                 end
+                 local rewardCollected = rewardData.OnRewardCollected(name)
+                 if rewardCollected then
+                    table.insert(plrData.collected.Basic,rewardData.name)
+                    minetest.chat_send_player(name, "Award Collected")
+                    PlayerStore.save()
+                 end
+            elseif fields["Premium"..rewardData.name] then
+                    
+                    
+
+
+            end
+
+        end
+        
     end
+
 end)
 
 return guiHandler

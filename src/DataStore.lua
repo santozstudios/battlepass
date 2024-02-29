@@ -73,6 +73,18 @@ function PlayerStore.getPlayerData(name)
 	data.name     = data.name or name
 	data.unlocked = data.unlocked or {}
 
+    data.triggerData = data.triggerData or {}
+
+	data.tierData = data.tierData or {
+		currentTier = 1,
+		progress = 0
+	}
+
+	data.collected = data.collected or {
+		Basic = {},
+		Premium = {}
+	}
+
 	return data
 end
 
@@ -95,4 +107,5 @@ function PlayerStore.load()
 		__player_data = json and minetest.parse_json(json) or {}
 	end
 end
+
 

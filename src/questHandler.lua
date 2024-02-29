@@ -1,12 +1,12 @@
 function quests.register_quest(name, def)
 	def.name = name
 
-	-- -- Add Triggers
-	-- if def.trigger and def.trigger.type then
-	-- 	local tdef = awards.registered_triggers[def.trigger.type]
-	-- 	assert(tdef, "Trigger not found: " .. def.trigger.type)
-	-- 	tdef:on_register(def)
-	-- end
+	-- Add Triggers
+	if def.trigger and def.trigger.type then
+		local tdef = quests.registered_triggers[def.trigger.type]
+		assert(tdef, "Trigger not found: " .. def.trigger.type)
+		tdef:on_register(def)
+	end
 
 	function def:can_unlock(data)
 		if not self.requires then
@@ -21,13 +21,13 @@ function quests.register_quest(name, def)
 		return true
 	end
 
-    function def:get_progress(data)
-        local current = math.min(data[tname] or 0, def.trigger.target)
-        return {
-            current = current,
-            target = def.trigger.target,
-        }
-    end
+    -- function def:get_progress(data)
+    --     local current = math.min(data[tname] or 0, def.trigger.target)
+    --     return {
+    --         current = current,
+    --         target = def.trigger.target,
+    --     }
+    -- end
 
 	-- Add Quest
 	if not quests.register_quests[def.week] then
