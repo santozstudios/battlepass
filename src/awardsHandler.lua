@@ -32,7 +32,8 @@ function rewards.Get_Rewards(name)
           Data[idx] = {
             name = awardData.name,
             title = awardData.title,
-			OnRewardCollected = awardData.OnRewardCollected
+			OnRewardCollected = awardData.OnRewardCollected,
+			OnPremiumRewardCollected = awardData.OnPremiumRewardCollected
           }
       end
     end

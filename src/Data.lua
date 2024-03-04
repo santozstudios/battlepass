@@ -13,6 +13,18 @@ quests.register_quest("Dummy1", {
 	}
 })
 
+quests.register_quest("Dummy5", {
+	title = "Community Quest",
+	description = "To complete this quest you must place 10 nodes.",
+    Points = 150,
+	daily = true,
+	trigger = {
+		type = "place",
+		target = 20,
+		item = "default:diamondblock",
+	}
+})
+
 quests.register_quest("Dummy2", {
 	title = "Points Quest",
 	description = "To complete this quest you must work as a community to kill 100 skeletons",
@@ -74,20 +86,6 @@ quests.register_quest("Dummy6", {
 	description = "To complete this quest you must work as a community to kill 100 skeletons",
     Points = 80,
 	week = "Week4",
-	trigger = {
-		type = "death",
-		target = 100
-	},
-	premium = {
-		points = 160
-	}
-})
-
-quests.register_quest("Dummy7", {
-	title = "Beat Enimies",
-	description = "To complete this quest you must work as a community to kill 100 skeletons",
-    Points = 80,
-	week = "Week5",
 	trigger = {
 		type = "death",
 		target = 100

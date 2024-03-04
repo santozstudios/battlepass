@@ -30,17 +30,21 @@ function quests.register_quest(name, def)
     -- end
 
 	-- Add Quest
-	if not quests.register_quests[def.week] then
-		quests.register_quests[def.week] = {}
-	end
+	if def.week then 
+		if not quests.register_quests.WeeklyQuests[def.week] then
+			quests.register_quests.WeeklyQuests[def.week] = {}
+		end
+		quests.register_quests.WeeklyQuests[def.week][name] = def
 
-	quests.register_quests[def.week][name] = def
+	elseif def.daily then
+		table.insert(quests.register_quests.DailyQuests,def)
+	end
 
 end
 
 function quests.GetWeeks()
 	local weeks = {}
-	for week,data in pairs(quests.register_quests) do
+	for week,data in pairs(quests.register_quests.WeeklyQuests) do
 		local idx = tonumber(string.sub(week, 5, #week))
 
 		if idx then 
@@ -59,7 +63,7 @@ function quests.Get_WeeklyQuests(name,weekName)
    local data = PlayerStore.getPlayerData(name)
    local Data = {}
    
-     for week,weekData in pairs(quests.register_quests) do
+     for week,weekData in pairs(quests.register_quests.WeeklyQuests) do
 		if(week == weekName) then
 			for questName,def in pairs(weekData) do
 				if not is_unlocked[name] and def:can_unlock(data) then
@@ -69,7 +73,6 @@ function quests.Get_WeeklyQuests(name,weekName)
 					   name     = def.title,
 					   des      = def.description,
 					   points = def.Points,
-					   unlocked = false,
 					   progress = progress,
 					   week = def.week,
 					   premiumPoints = def.premium.points
@@ -81,4 +84,22 @@ function quests.Get_WeeklyQuests(name,weekName)
      
      return Data
 
+end
+
+function quests.GetDailyQuests(name)
+
+	local Data = {}
+	local plrData = PlayerStore.getPlayerData(name)
+
+   for i,def in ipairs(quests.register_quests.DailyQuests) do
+	local progress = def.get_progress and def:get_progress(plrData)
+       Data[i] = {
+		   name     = def.title,
+		   des      = def.description,
+		   points = def.Points,
+		   progress = progress,
+	   }
+   end
+
+   return Data
 end

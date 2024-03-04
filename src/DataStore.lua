@@ -85,6 +85,10 @@ function PlayerStore.getPlayerData(name)
 		Premium = {}
 	}
 
+	data.hasPremiumPass = data.hasPremiumPass or false
+
+
+
 	return data
 end
 

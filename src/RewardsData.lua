@@ -1,19 +1,26 @@
 rewards.register_reward("Tier1", {
     Required_Tier = 1,
     title = "2x Player Joule Booster",
+
     OnRewardCollected = function(plr)
         return true
     end,
-    OnPremiumRewardCollected = function(plr)
 
+    OnPremiumRewardCollected = function(plr)
+        return true
     end
 })
 
 rewards.register_reward("Tier2", {
     Required_Tier = 2,
     title = "2x Player Joule Booster",
+
     OnRewardCollected = function(plr)
-        
+        return true
+    end,
+
+    OnPremiumRewardCollected = function(plr)
+       return true
     end
 })
 

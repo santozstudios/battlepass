@@ -1,50 +1,11 @@
 
 local guiHandler = {}
 
-local inventory_formspec = "size[5,8]"..
-"image[1.1,-0.8;3,1;battlePass.png]"..
-"style[Info_Button;fgcolor=red;textcolor=black]"..
-"image_button[0.2,0.2;2.2,1.8;tile.png;Info_Button;PlayerInfo;true;false;]"..
-"tooltip[Info_Button;"..
-minetest.colorize("#EE0", "Player Info")..
-"(Click me)"..
-"\n\nClick this to see your purchases."..
-";#000000;#FFFFFF]"..
-"style[Quest_Button;fgcolor=red;textcolor=black]"..
-"image_button[2.7,0.2;2.2,1.8;tile.png;Quest_Button;Quests;true;false;]"..
-"tooltip[Quest_Button;"..
-minetest.colorize("#EE0", "Quests")..
-"(Click me)"..
-"\n\nClick this to view the Quests."..
-";#000000;#FFFFFF]"..
-"style[Pass_Button;fgcolor=red;textcolor=black]"..
-"image_button[0.2,2.2;2.2,1.8;tile.png;Pass_Button;Buy Premium;true;false;]"..
-"tooltip[Pass_Button;"..
-minetest.colorize("#A020F0", "Genesis Battle Pass")..
-"\n\n"..
-minetest.colorize("#EE0",
-"Level up your Battle Pass by\ncompleting weekly & daily Quests.\n\n"..
-"Earn rewards like Elliptic keys.\nThese keys can open the Elliptic crate\nin lobby which contains new ASICs!\n\n"..
-"Get even more quests and rewards by purchasing the ")..minetest.colorize("#2E8B57","Premium Battlepass")..
-minetest.colorize("#EE0"," below")..
-";#000000;#FFFFFF]"..
-"style[Reward_Button;fgcolor=red;textcolor=black]"..
-"image_button[2.7,2.2;2.2,1.8;tile.png;Reward_Button;Rewards;true;false]"..
-"tooltip[Reward_Button;"..
-minetest.colorize("#EE0", "Rewards")..
-"(Click me)"..
-"\n\nClick this to view the Rewards."..
-";#000000;#FFFFFF]"..
--- "style_type[box; border = true;borderwidths = 5;bordercolors = #0000FF]"..
-"list[current_player;main;0,4.2;5,4;]"..
-""
-
 local currentIdx
 local currentAwardIdx
 
 function guiHandler.get_formspec(guiName,plrName,formspecData)
 
-    if not formspecData then return end
 
     local plrData = PlayerStore.getPlayerData(plrName)
 
@@ -53,17 +14,19 @@ function guiHandler.get_formspec(guiName,plrName,formspecData)
         "list[current_player;main;0,3;6,4;]"..
         "image[1.5,-0.8;3,1;battlePass.png]"..
         "style[Back_Btn;fgcolor=red;textcolor=black]"..
-        "image_button[0,1.8;2.2,1;Button.png;Back_Btn;Back;true;false;]"..""
+        "style[DailyQst_Btn;fgcolor=red;textcolor=black]"..
+        "image_button[0,1.8;2.2,1;Button.png;Back_Btn;Back;true;false;]"..
+        "image_button[3,1.8;2.2,1;Button.png;DailyQst_Btn;Daily;true;false;]"..""
 
         if(currentIdx == #formspecData) then 
            currentIdx = 1
         end
 
-        if(currentIdx + 3 < #formspecData) then
-            formspec = formspec..
-            "style[Forward_Btn;fgcolor=red;textcolor=black]"..
-            "image_button[3,1.8;2.2,1;Button.png;Forward_Btn;Forward;true;false;]"..""
-        end
+        -- if(currentIdx + 3 < #formspecData) then
+        --     formspec = formspec..
+        --     "style[Forward_Btn;fgcolor=red;textcolor=black]"..
+        --     "image_button[3,1.8;2.2,1;Button.png;Forward_Btn;Forward;true;false;]"..""
+        -- end
 
         if(currentIdx == 4) then 
             currentIdx = currentIdx + 1
@@ -200,23 +163,105 @@ function guiHandler.get_formspec(guiName,plrName,formspecData)
         end
 
         return formspec
+    elseif(guiName == "Info") then
+        local plrTier = plrData.tierData["currentTier"]
+        local currPoints = plrData.tierData["progress"]
+
+        local inventory_formspec = "size[5,8]"..
+        "image[1.1,-0.8;3,1;battlePass.png]"..
+        "style[Info_Button;fgcolor=red;textcolor=black]"..
+        "image_button[0.2,0.2;2.2,1.8;tile.png;Info_Button;PlayerInfo;true;false;]"..
+        "tooltip[Info_Button;"..
+        minetest.colorize("#FFFF00", "Season 3 Battle Pass")..
+        "\n"..
+        minetest.colorize("#A9A9A9", "Premium Battle Pass")..
+        "\n\n"..
+        minetest.colorize("#A9A9A9", "Week ")..
+        minetest.colorize("#008000", "Finished ")..
+        "\n\n"..
+        minetest.colorize("#FFFF00", "Statistics")..
+        "\n"..
+        minetest.colorize("#A9A9A9", "Tier ")..
+        minetest.colorize("#FFFFFF", tostring(plrTier))..
+        "\n"..
+        minetest.colorize("#A9A9A9", "Points ")..
+        minetest.colorize("#FFFFFF", tostring(currPoints.."/100"))..
+        "]"..
+        "style[Quest_Button;fgcolor=red;textcolor=black]"..
+        "image_button[2.7,0.2;2.2,1.8;tile.png;Quest_Button;Quests;true;false;]"..
+        "tooltip[Quest_Button;"..
+        minetest.colorize("#EE0", "Quests")..
+        "(Click me)"..
+        "\n\nClick this to view the Quests."..
+        ";#000000;#FFFFFF]"..
+        "style[Pass_Button;fgcolor=red;textcolor=black]"..
+        "image_button[0.2,2.2;2.2,1.8;tile.png;Pass_Button;Buy Premium;true;false;]"..
+        "tooltip[Pass_Button;"..
+        minetest.colorize("#A020F0", "Genesis Battle Pass")..
+        "\n\n"..
+        minetest.colorize("#EE0",
+        "Level up your Battle Pass by\ncompleting weekly & daily Quests.\n\n"..
+        "Earn rewards like Elliptic keys.\nThese keys can open the Elliptic crate\nin lobby which contains new ASICs!\n\n"..
+        "Get even more quests and rewards by purchasing the ")..minetest.colorize("#2E8B57","Premium Battlepass")..
+        minetest.colorize("#EE0"," below")..
+        ";#000000;#FFFFFF]"..
+        "style[Reward_Button;fgcolor=red;textcolor=black]"..
+        "image_button[2.7,2.2;2.2,1.8;tile.png;Reward_Button;Rewards;true;false]"..
+        "tooltip[Reward_Button;"..
+        minetest.colorize("#EE0", "Rewards")..
+        "(Click me)"..
+        "\n\nClick this to view the Rewards."..
+        ";#000000;#FFFFFF]"..
+        -- "style_type[box; border = true;borderwidths = 5;bordercolors = #0000FF]"..
+        "list[current_player;main;0,4.2;5,4;]"..
+        ""
+
+        return inventory_formspec
+
+    elseif(guiName == "DailyQuest") then 
+        local formspec = "size[6,7]"..
+        "list[current_player;main;0,3;6,4;]"..
+        "image[1.5,-0.8;3,1;battlePass.png]"..
+        "style[Back_Btn;fgcolor=red;textcolor=black]"..
+        "image_button[0,1.8;2.2,1;Button.png;Back_Btn;Back;true;false;]"..""
+        
+        for i,data in ipairs(formspecData) do
+
+            local questTitle = data.name
+            local questDes = data.des
+            local questPoints = tostring(data.points.."x")
+            local currprogress = data.progress.current
+            local Questtarget = data.progress.target
+
+            formspec = formspec..
+            "image_button[" .. tostring((i-1) * 1.6) ..",0.6;1.5,1;tile.png;"..questTitle..";;true;false;]"..
+            "tooltip["..questTitle..";"..
+            minetest.colorize("#EE0", "QUEST:")..
+            minetest.colorize("#FFFFFF",questTitle.."\n")..
+            questDes.."\n\n"..
+            minetest.colorize("#A020F0", "INFORMATION")..
+            "\n"..
+            minetest.colorize("#5A5A5A","Points:")..
+            questPoints.."\n"..
+            minetest.colorize("#5A5A5A","Progress:")..
+            currprogress.."/"..Questtarget..']'
+        end
+        return formspec
     end
 end
 
 minetest.register_chatcommand("bp", { 
     description = "Show Main Gui",
     func = function(name,param)
-        minetest.show_formspec(name, "battlepass:mainGui", inventory_formspec)
+        minetest.show_formspec(name, "battlepass:mainGui", guiHandler.get_formspec("Info",name))
     end,
 })
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
     local name = player:get_player_name()
-    minetest.chat_send_player(name, name.." said: Don't Play!")
 
     if formname == "battlepass:mainGui" then
         if fields.Info_Button then
-            print(fields.Info_Button.State);
             -- minetest.show_formspec(player:get_player_name(), "battlepass:Quests", quest_formSpec)
         elseif fields.Reward_Button then
              local rewardsData = rewards.Get_Rewards(name)
@@ -248,12 +293,18 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
                 end
                 minetest.show_formspec(name, "battlepass:Quests",guiHandler.get_formspec("Quest",name,quest_weeks))
             else
-                minetest.show_formspec(name, "battlepass:mainGui",inventory_formspec)
+                minetest.show_formspec(name, "battlepass:mainGui", guiHandler.get_formspec("Info",name))
             end
         end
 
-        if fields.Forward_Btn then
-            minetest.show_formspec(name, "battlepass:Quests",guiHandler.get_formspec("Quest",name,quest_weeks))
+        -- if fields.Forward_Btn then
+        --     minetest.show_formspec(name, "battlepass:Quests",guiHandler.get_formspec("Quest",name,quest_weeks))
+        -- end
+
+        if fields.DailyQst_Btn then
+            local dailyQuests = quests.GetDailyQuests(name)
+            if not dailyQuests then return end
+            minetest.show_formspec(name, "battlepass:DailyQuests",guiHandler.get_formspec("DailyQuest",name,dailyQuests))
         end
 
         if #quest_weeks > 0 then
@@ -308,6 +359,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
                 local plrTier = plrData.tierData["currentTier"]
                 local collectedData = plrData.collected
                 if not collectedData then return end
+
                 if i >= plrTier then
                     minetest.chat_send_player(name, "Award Locked")
                      return
@@ -320,10 +372,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
                      end
                  end
 
-                for key,value in pairs(rewardData) do
-                    minetest.chat_send_player(name, "Keys "..key)
-                end
-
 
                 if not rewardData.OnRewardCollected then
                      return
@@ -334,13 +382,58 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
                     minetest.chat_send_player(name, "Award Collected")
                     PlayerStore.save()
                  end
+                 
             elseif fields["Premium"..rewardData.name] then
-                    
-                    
+                local plrData = PlayerStore.getPlayerData(name)
+                local collectedData = plrData.collected
+                local plrTier = plrData.tierData["currentTier"]
 
+                minetest.chat_send_player(name, "Premium Pass "..tostring(plrData.hasPremiumPass))
+
+                if not plrData.hasPremiumPass then
+                   minetest.chat_send_player(name, "Player has no Premium Pass.")
+                   return
+                end
+
+
+                if i >= plrTier then
+                    minetest.chat_send_player(name, "Award Locked")
+                     return
+                 end
+
+                if not rewardData.OnPremiumRewardCollected then return end
+               
+                for i,collAwd in ipairs(collectedData.Premium) do
+                    if rewardData.name == collAwd then
+                       minetest.chat_send_player(name, "Award Collected Previously")
+                       return
+                    end
+                end
+
+                local rewardCollected = rewardData.OnPremiumRewardCollected(name)
+
+                if rewardCollected then
+                    table.insert(plrData.collected.Premium,rewardData.name)
+                    minetest.chat_send_player(name, "Award Collected")
+                    PlayerStore.save()
+                 end
 
             end
 
+        end
+
+    elseif(formname == "battlepass:DailyQuests") then
+
+        if fields.Back_Btn then
+            local quest_weeks = quests.GetWeeks()
+
+            if #quest_weeks == 0 then
+                return
+            end
+
+            currentIdx = 1
+
+            minetest.show_formspec(name, "battlepass:Quests",guiHandler.get_formspec("Quest",name,quest_weeks))
         end
         
     end
