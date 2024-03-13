@@ -70,7 +70,7 @@ function quests.Get_WeeklyQuests(name,weekName)
 					local progress = def.get_progress and def:get_progress(data)
 	   
 					Data[#Data + 1] = {
-					   name     = def.title,
+					   name     = def.week,
 					   des      = def.description,
 					   points = def.Points,
 					   progress = progress,

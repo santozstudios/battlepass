@@ -60,16 +60,17 @@ function guiHandler.get_formspec(guiName,plrName,formspecData,updateRewards)
             local Questtarget = data.progress.target
             local premiumPts = tostring(data.premiumPoints.."x")
 
-            -- local progressBar = (currprogress/Questtarget) * 7
+            local progressBar = (currprogress/Questtarget) * 7
 
             formspec = formspec..
+            "label[1.3,-0.2;"..questTitle.."]"..
             "image[0.2,"..tostring((i - 0.3) + ((i-1) * 0.3))..";11,1.5;Container.png]"..
             "image[0.2,"..tostring((4.1 + i) + ((i-1) * 0.3))..";11,1.5;Container.png]"..
             "label[1,"..tostring((i - 0.1) + ((i-1) * 0.3))..";"..questDes.."]"..
             "label[1,"..tostring((4.3 + i) + ((i-1) * 0.3))..";"..questDes.."]"..
-            "image[0.8,"..tostring((i + 0.5) + ((i-1) * 0.3))..";7,0.2;tile.png]"..
+            "image[0.8,"..tostring((i + 0.5) + ((i-1) * 0.3))..";"..progressBar..",0.2;tile.png]"..
             "label[6.5,"..tostring((i + 0.35) + ((i-1) * 0.3))..";"..currprogress.."/"..Questtarget.."]"..
-            "image[0.8,"..tostring((4.9 + i) + ((i-1) * 0.3))..";7,0.2;tile.png]"..
+            "image[0.8,"..tostring((4.9 + i) + ((i-1) * 0.3))..";"..progressBar..",0.2;tile.png]"..
             "label[6.5,"..tostring((4.8 + i) + ((i-1) * 0.3))..";"..currprogress.."/"..Questtarget.."]"..
             "image[7.8,"..tostring((i) + ((i-1) * 0.3))..";0.8,0.6;default_wood.png]"..
             "image[7.8,"..tostring((4.4 + i) + ((i-1) * 0.3))..";0.8,0.6;default_wood.png]"..
