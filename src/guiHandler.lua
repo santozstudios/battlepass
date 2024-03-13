@@ -14,7 +14,7 @@ function guiHandler.get_formspec(guiName,plrName,formspecData,updateRewards)
     if(guiName == "Quest") then
         local formspec = "size[9,9]"..
         -- "list[current_player;main;0,3;6,4;]"..
-        "image[3,-0.8;3,1;battlePass.png]"..
+        -- "image[3,-0.8;3,1;battlePass.png]"..
         "style[Back_Btn;fgcolor=red;textcolor=black]"..
         "style[DailyQst_Btn;fgcolor=red;textcolor=black]"..
         "label[0.1,0.3;FREE CHALLENGES]"..
@@ -63,14 +63,16 @@ function guiHandler.get_formspec(guiName,plrName,formspecData,updateRewards)
             local progressBar = (currprogress/Questtarget) * 7
 
             formspec = formspec..
-            "label[1.3,-0.2;"..questTitle.."]"..
+            "label[4,-0.2;"..questTitle.."]"..
             "image[0.2,"..tostring((i - 0.3) + ((i-1) * 0.3))..";11,1.5;Container.png]"..
             "image[0.2,"..tostring((4.1 + i) + ((i-1) * 0.3))..";11,1.5;Container.png]"..
             "label[1,"..tostring((i - 0.1) + ((i-1) * 0.3))..";"..questDes.."]"..
             "label[1,"..tostring((4.3 + i) + ((i-1) * 0.3))..";"..questDes.."]"..
-            "image[0.8,"..tostring((i + 0.5) + ((i-1) * 0.3))..";"..progressBar..",0.2;tile.png]"..
+            "image[0.78,"..tostring((i + 0.4) + ((i-1) * 0.3))..";7.03,0.4;LoadingBar_Bg.png]"..
+            "image[0.8,"..tostring((i + 0.43) + ((i-1) * 0.3))..";"..progressBar..",0.3;LoadingBar.png]"..
             "label[6.5,"..tostring((i + 0.35) + ((i-1) * 0.3))..";"..currprogress.."/"..Questtarget.."]"..
-            "image[0.8,"..tostring((4.9 + i) + ((i-1) * 0.3))..";"..progressBar..",0.2;tile.png]"..
+            "image[0.78,"..tostring((4.82 + i) + ((i-1) * 0.3))..";7.02,0.4;LoadingBar_Bg.png]"..
+            "image[0.8,"..tostring((4.85 + i) + ((i-1) * 0.3))..";"..progressBar..",0.3;LoadingBar.png]"..
             "label[6.5,"..tostring((4.8 + i) + ((i-1) * 0.3))..";"..currprogress.."/"..Questtarget.."]"..
             "image[7.8,"..tostring((i) + ((i-1) * 0.3))..";0.8,0.6;default_wood.png]"..
             "image[7.8,"..tostring((4.4 + i) + ((i-1) * 0.3))..";0.8,0.6;default_wood.png]"..
@@ -210,6 +212,11 @@ function guiHandler.get_formspec(guiName,plrName,formspecData,updateRewards)
     elseif(guiName == "Info") then
         local plrTier = plrData.tierData["currentTier"]
         local currPoints = plrData.tierData["progress"]
+        local passStatus = "Free"
+
+        if plrData.hasPremiumPass then
+           passStatus = "Premium"
+        end
 
         local inventory_formspec = "size[5,8]"..
         "image[1.1,-0.8;3,1;battlePass.png]"..
@@ -246,7 +253,7 @@ function guiHandler.get_formspec(guiName,plrName,formspecData,updateRewards)
         -- "style_type[box; border = true;borderwidths = 5;bordercolors = #0000FF]"..
         "style_type[label;text_size=22]"..
         "label[2,3.5;INFO]"..
-        "label[0.7,4.2;Pass: Premium/Free]"..
+        "label[0.7,4.2;Pass: "..passStatus.."]"..
         "label[0.7,4.8;Tier: "..plrTier.."]"..
         "label[0.7,5.5;Points: "..currPoints.."]"..
 
