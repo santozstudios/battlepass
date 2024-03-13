@@ -132,6 +132,10 @@ function guiHandler.get_formspec(guiName,plrName,formspecData,updateRewards)
             local premiumRewardStatus = nil
             local plrTier = plrData.tierData["currentTier"]
 
+            for key,tableData in pairs(plrData.collected) do 
+                minetest.chat_send_player(plrName, "Key is "..tostring(key))  
+            end
+
             if(i >= plrTier) then
                rewardStatus = "Locked"
             else
@@ -183,24 +187,24 @@ function guiHandler.get_formspec(guiName,plrName,formspecData,updateRewards)
 
             if rewardStatus == "Locked" then
                 formspec = formspec..
-                "image_button[" .. tostring((0.6 * (j-1) + (j + 1.2) * 1.5)) ..",1;1,1;Locked.png;"..rewardStatus..";;true;false;]"
+                "image[" .. tostring((0.6 * (j-1) + (j + 1.2) * 1.5)) ..",1;1,1;Locked.png]"
             elseif rewardStatus == "Unlocked" then 
                 formspec = formspec..
-                "image_button[" .. tostring((0.6 * (j-1) + (j + 1.2) * 1.5)) ..",1;1,1;Unlocked.png;"..rewardStatus..";;true;false;]"
+                "image[" .. tostring((0.6 * (j-1) + (j + 1.2) * 1.5)) ..",1;1,1;Unlocked.png]"
             else
                 formspec = formspec..
-                "image_button[" .. tostring((0.6 * (j-1) + (j + 1.2) * 1.5)) ..",1;1,1;tick.png;"..rewardStatus..";;true;false;]"
+                "image[" .. tostring((0.6 * (j-1) + (j + 1.2) * 1.5)) ..",1;1,1;tick.png]"
             end
 
             if premiumRewardStatus == "Locked" then
                 formspec = formspec..
-                "image_button[" .. tostring((0.6 * (j-1) + (j + 1.2) * 1.5)) ..",4.3;1,1;Locked.png;"..rewardStatus..";;true;false;]"
+                "image[" .. tostring((0.6 * (j-1) + (j + 1.2) * 1.5)) ..",4.3;1,1;Locked.png]"
             elseif premiumRewardStatus == "Unlocked" then 
                 formspec = formspec..
-                "image_button[" .. tostring(0.3 + ((j-1) * 1.5)) ..",4.3;1,1;Unlocked.png;"..rewardStatus..";;true;false;]"
+                "image[" .. tostring(0.3 + ((j-1) * 1.5)) ..",4.3;1,1;Unlocked.png]"
             else
                 formspec = formspec..
-                "image_button[" .. tostring(0.3 + ((j-1) * 1.5)) ..",4.3;1,1;tick.png;"..rewardStatus..";;true;false;]"
+                "image[" .. tostring(0.3 + ((j-1) * 1.5)) ..",4.3;1,1;tick.png]"
             end
 
 
