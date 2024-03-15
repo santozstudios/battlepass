@@ -82,6 +82,7 @@ function guiHandler.get_formspec(guiName,plrName,formspecData,updateRewards)
 
         return formspec
     elseif(guiName == "Award") then
+        
         local formspec = "size[9,6]"..
         "image[2.9,-0.8;3,1;battlePass.png]"..
         -- "list[current_player;main;0,5;6,4;]"..
@@ -132,9 +133,9 @@ function guiHandler.get_formspec(guiName,plrName,formspecData,updateRewards)
             local premiumRewardStatus = nil
             local plrTier = plrData.tierData["currentTier"]
 
-            for key,tableData in pairs(plrData.collected) do 
-                minetest.chat_send_player(plrName, "Key is "..tostring(key))  
-            end
+            -- for key,tableData in pairs(plrData.tierData) do 
+            --     minetest.chat_send_player(plrName, "Key is "..tostring(key))  
+            -- end
 
             if(i >= plrTier) then
                rewardStatus = "Locked"
@@ -183,7 +184,7 @@ function guiHandler.get_formspec(guiName,plrName,formspecData,updateRewards)
             minetest.colorize("#90EE90"," "..rewardStatus).."]"..
             ""
 
-            minetest.chat_send_player(plrName, "Status Is "..rewardStatus)
+            -- minetest.chat_send_player(plrName, "Status Is "..rewardStatus)
 
             if rewardStatus == "Locked" then
                 formspec = formspec..

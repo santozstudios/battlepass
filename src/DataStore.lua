@@ -3,6 +3,7 @@ local __player_data
 
 
 local function convert_data()
+	error("Laka")
 	minetest.log("warning", "Importing awards data from previous version")
 
 	local old_players = __player_data
@@ -81,8 +82,8 @@ function PlayerStore.getPlayerData(name)
 	}
 
 	data.collected = data.collected or {
-		Basic = {},
-		Premium = {}
+		Basic = {"Dummy"},
+		Premium = {"Dummy"}
 	}
 
 	data.hasPremiumPass = data.hasPremiumPass or false
@@ -105,7 +106,7 @@ function PlayerStore.load()
 		end
 		file:close()
 		os.rename(old_save_path, minetest.get_worldpath().."/awards.bk.txt")
-		awards.save()
+		PlayerStore.save()
 	else
 		local json = storage:get("player_data")
 		__player_data = json and minetest.parse_json(json) or {}
