@@ -3,6 +3,9 @@ quests.register_quest("Dummy1", {
 	description = "You must place 10 nodes.",
     Points = 150,
 	week = "Week1",
+	questType = "place",
+	startTime = os.time(),
+    endTime = os.time() + 604800,
 	premium = {
 		points = 200,
 	},
@@ -13,12 +16,14 @@ quests.register_quest("Dummy1", {
 	}
 })
 
-quests.register_quest("Dummy5", {
+quests.register_quest("Dummy2", {
 	title = "Community Quest",
 	description = "You must place 10 nodes.",
     Points = 150,
-	daily = true,
 	week = "Week1",
+	startTime = os.time(),
+	endTime = os.time() + 604800,
+	questType = "place",
 	trigger = {
 		type = "place",
 		target = 20,
@@ -29,72 +34,20 @@ quests.register_quest("Dummy5", {
 	},
 })
 
-quests.register_quest("Dummy2", {
+quests.register_quest("Dummy3", {
 	title = "Points Quest",
-	description = "You must work as a community to kill 100 skeletons",
+	description = "You must place 30 nodes.",
     Points = 100,
 	week = "Week2",
+	questType = "place",
+	startTime = os.time() + 604800,
+	endTime = os.time() + 1209600,
 	premium = {
 		points = 250
 	},
 	trigger = {
-		type = "death",
-		target = 100
-	}
-})
-
-quests.register_quest("Dummy3", {
-	title = "Collect Diamonds",
-	description = "You must work as a community to kill 100 skeletons",
-    Points = 200,
-	week = "Week1",
-	premium = {
-		points = 300
-	},
-	trigger = {
-		type = "death",
-		target = 100
-	}
-})
-
-quests.register_quest("Dummy4", {
-	title = "Boost Quest",
-	description = "You must work as a community to kill 100 skeletons",
-    Points = 80,
-	week = "Week2",
-	trigger = {
-		type = "death",
-		target = 100
-	},
-	premium = {
-		points = 160
-	}
-})
-
-quests.register_quest("Dummy5", {
-	title = "Savier",
-	description = "You must work as a community to kill 100 skeletons",
-    Points = 80,
-	week = "Week3",
-	trigger = {
-		type = "death",
-		target = 100
-	},
-	premium = {
-		points = 160
-	}
-})
-
-quests.register_quest("Dummy6", {
-	title = "Collect coins",
-	description = "You must work as a community to kill 100 skeletons",
-    Points = 80,
-	week = "Week4",
-	trigger = {
-		type = "death",
-		target = 100
-	},
-	premium = {
-		points = 160
+		type = "place",
+		target = 30,
+		item = "default:diamondblock"
 	}
 })

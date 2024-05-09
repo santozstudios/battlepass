@@ -1,5 +1,7 @@
+
 function quests.register_quest(name, def)
 	def.name = name
+	local playerObj = minetest.localplayer
 
 	-- Add Triggers
 	if def.trigger and def.trigger.type then
@@ -21,24 +23,56 @@ function quests.register_quest(name, def)
 		return true
 	end
 
-    -- function def:get_progress(data)
-    --     local current = math.min(data[tname] or 0, def.trigger.target)
-    --     return {
-    --         current = current,
-    --         target = def.trigger.target,
-    --     }
-    -- end
-
 	-- Add Quest
 	if def.week then 
 		if not quests.register_quests.WeeklyQuests[def.week] then
 			quests.register_quests.WeeklyQuests[def.week] = {}
 		end
 		quests.register_quests.WeeklyQuests[def.week][name] = def
-
 	elseif def.daily then
 		table.insert(quests.register_quests.DailyQuests,def)
 	end
+
+end
+
+function quests.LoadQuestData(plrName)
+	local data  = PlayerStore.getPlayerData(plrName)
+	--------- Storing Weekly Quest Data if not Stored ---------------
+	for week,weekData in pairs(quests.register_quests.WeeklyQuests) do
+		for questName,def in pairs(weekData) do
+			if not data.questData[def.questType] then
+				data.questData[def.questType] = {}
+		    end
+			if def.startTime and def.endTime and not data.questData[def.questType][def.name] then
+				local dataTable = {
+					StartTime = def.startTime,
+					EndTime = def.endTime,
+					Progress = 0,
+					Name = def.name,
+				}
+				data.questData[def.questType][def.name] = dataTable
+		    end
+		end
+	end
+
+	-------- Storing Daily Quest Data if not stored -----------
+	for i,def in ipairs(quests.register_quests.DailyQuests) do
+		if not data.questData[def.questType] then
+			data.questData[def.questType] = {}
+		end
+		if def.startTime and def.endTime and not data.questData[def.questType][def.name] then
+			local dataTable = {
+				StartTime = def.startTime,
+				EndTime = def.endTime,
+				Progress = 0,
+				Name = def.name,
+			}
+			data.questData[def.questType][def.name] = dataTable
+		end
+	end
+
+	PlayerStore.save()
+
 
 end
 
@@ -57,8 +91,6 @@ function quests.GetWeeks()
 end
 
 function quests.Get_WeeklyQuests(name,weekName)
-
-
    local is_unlocked = {}
    local data = PlayerStore.getPlayerData(name)
    local Data = {}
@@ -85,6 +117,8 @@ function quests.Get_WeeklyQuests(name,weekName)
      return Data
 
 end
+
+
 
 function quests.GetDailyQuests(name)
 

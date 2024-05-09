@@ -75,6 +75,10 @@ function PlayerStore.getPlayerData(name)
 	data.unlocked = data.unlocked or {}
 
     data.triggerData = data.triggerData or {}
+	
+	data.questData = data.questData or {
+		
+	}
 
 	data.tierData = data.tierData or {
 		currentTier = 1,
@@ -87,8 +91,6 @@ function PlayerStore.getPlayerData(name)
 	}
 
 	data.hasPremiumPass = data.hasPremiumPass or false
-
-
 
 	return data
 end

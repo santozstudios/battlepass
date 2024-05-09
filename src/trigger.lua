@@ -8,7 +8,6 @@ function default_def:run_callbacks(player, data,table_func)
 	for i = 1, #self.on do
 		local res = nil
 		local entry = self.on[i]
-        minetest.chat_send_player(name, "Points are "..entry.award)
 		if type(entry) == "function" then
 			res = entry(player, data)
 		elseif type(entry) == "table" and entry.points then
@@ -58,12 +57,26 @@ function quests.register_trigger(tname,tdef)
             tdef.register(tmp)
     
             function def.get_progress(_, data)
-                local current = math.min(data[tname] or 0, tmp.target)
-                return {
-                    current = current,
-                    target = tmp.target,
-                    label = S(tdef.progress, current, tmp.target),
-                }
+                -- local current = math.min(data[tname] or 0, tmp.target)
+                -- return {
+                --     current = current,
+                --     target = tmp.target,
+                --     label = S(tdef.progress, current, tmp.target),
+                -- }
+				local done
+				for questType,questData in pairs(data.questData) do
+					if questType == tname then
+						for questName,data in pairs(questData) do
+							if data.Name == tmp.name then
+                               done = data.Progress
+							   break
+							end
+						end
+						if done then break end
+					end
+				end 
+
+				done = math.min(0, tmp.target)
             end
     
             function def.getDefaultDescription(_)
@@ -74,6 +87,10 @@ function quests.register_trigger(tname,tdef)
             if old_reg then
                 return old_reg(tdef, def)
             end
+
+			local data = PlayerStore.getPlayerData(name)
+			
+
         end
     
         function tdef.notify(player)
@@ -84,8 +101,20 @@ function quests.register_trigger(tname,tdef)
             -- Increment counter
             local currentVal = (data.triggerData[tname] or 0) + 1
             data.triggerData[tname] = currentVal
-    
-			
+
+			if data.questData[tname] then
+				for questType,questData in pairs(data.questData) do
+					if questType == tname then
+						for questName,data in pairs(questData) do
+							if data.StartTime - os.time() < 0 and data.EndTime - os.time() > 0 then
+								data.Progress = data.Progress + 1
+							end
+						end
+					end
+				end
+			end
+			PlayerStore.save()
+
             tdef:run_callbacks(player, data, function(questData)
 				minetest.chat_send_player(name, "Current Value "..currentVal)
 				if currentVal > questData.target then
@@ -108,7 +137,7 @@ function quests.register_trigger(tname,tdef)
 		function tdef:on_register(def)
 			-- Register trigger
 			local tmp = {
-				award  = def.name,
+				name  = def.name,
 				key    = tdef:get_key(def),
 				target = def.trigger.target,
                 points = def.Points
@@ -124,13 +153,30 @@ function quests.register_trigger(tname,tdef)
 			function def.get_progress(_, data)
 				data.triggerData[tname] = data.triggerData[tname] or {}
 
+
+
 				local done
-				if tmp.key then
-					done = data.triggerData[tname][tmp.key] or 0
-				else
-					done = data.triggerData[tname].__total or 0
-				end
-				done = math.min(done, tmp.target)
+				-- if tmp.key then
+				-- 	done = data.triggerData[tname][tmp.key] or 0
+				-- else
+				-- 	done = data.triggerData[tname].__total or 0
+				-- end
+				-- done = math.min(done, tmp.target)
+
+				for questType,questData in pairs(data.questData) do
+					if questType == tname then
+						for questName,data in pairs(questData) do
+							if data.Name == tmp.name then
+                               done = data.Progress
+							   break
+							end
+						end
+						if done then break end
+					end
+				end 
+
+				done = math.min(0, tmp.target)
+
 
 				return {
 					current = done,
@@ -173,6 +219,19 @@ function quests.register_trigger(tname,tdef)
 			if key:sub(1, 6) ~= "group:" then
 				data.triggerData[tname].__total = data.triggerData[tname].__total + n
 			end
+
+			if data.questData[tname] then
+				for questType,questData in pairs(data.questData) do
+					if questType == tname then
+						for questName,data in pairs(questData) do
+							if data.StartTime - os.time() < 0 and data.EndTime - os.time() > 0 then
+								data.Progress = data.Progress + 1
+							end
+						end
+					end
+				end
+			end
+			PlayerStore.save()
 
 			tdef:run_callbacks(player, data, function(questData)
 				local current
